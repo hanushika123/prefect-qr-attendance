@@ -39,9 +39,9 @@ function onScanSuccess(decodedText){
     document.getElementById("lastScan").innerHTML =
         decodedText;
 
-    if(scanner){
-        scanner.stop();
-    }
+   // if(scanner){
+     //   scanner.stop();
+  //  }
 
     fetch("https://script.google.com/macros/s/AKfycbzU7ofMGyxf56FxtXR5Mz_ObUr5RTXT9SmnA2P0CqFZkR0_XbR9nHqu64dJ3Ay2Jqo2ZQ/exec", {
 
@@ -62,8 +62,10 @@ function onScanSuccess(decodedText){
 
 .then(result => {
 
+    console.log(result);
+
     document.getElementById("status").innerHTML =
-        result.message;
+        JSON.stringify(result);
 
 })
 
