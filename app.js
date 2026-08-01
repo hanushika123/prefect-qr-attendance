@@ -6,25 +6,27 @@ function startScanner() {
 
     scanner = new Html5Qrcode("reader");
 
-    scanner.start(
-        {
-            facingMode: "environment"
-        },
-        {
-            fps: 10,
-            qrbox: {
-                width: 250,
-                height: 250
-            }
-        },
-        onScanSuccess,
-        function(error){
-            // Ignore scan errors
+    Html5Qrcode.getCameras().then(devices => {
+
+        if (devices.length) {
+
+            scanner.start(
+                devices[0].id,
+                {
+                    fps: 10,
+                    qrbox: 250
+                },
+                onScanSuccess,
+                errorMessage => {}
+            );
+
         }
 
-    ).catch(function(err){
+    }).catch(err => {
+
         document.getElementById("status").innerHTML =
-            "❌ Camera Error : " + err;
+        "❌ Camera Error : " + err;
+
     });
 
 }
