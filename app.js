@@ -74,3 +74,6 @@ function onScanSuccess(decodedText){
 
 });
 }
+window.onload = function(){
+    startScanner();
+};
