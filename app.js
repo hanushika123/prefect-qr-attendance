@@ -2,7 +2,8 @@ let scanner = null;
 
 function startScanner() {
 
-    document.getElementById("status").innerHTML = "📷 Opening camera...";
+    document.getElementById("status").innerHTML =
+        "📷 Opening camera...";
 
     scanner = new Html5Qrcode("reader");
 
@@ -25,57 +26,94 @@ function startScanner() {
     }).catch(err => {
 
         document.getElementById("status").innerHTML =
-        "❌ Camera Error : " + err;
+            "❌ Camera Error : " + err;
 
     });
 
 }
 
-function onScanSuccess(decodedText){
+
+function onScanSuccess(decodedText) {
 
     document.getElementById("status").innerHTML =
-        "✅ QR Detected";
+        "⏳ Processing...";
 
-    document.getElementById("lastScan").innerHTML =
-        decodedText;
 
-   // if(scanner){
-     //   scanner.stop();
-  //  }
+    fetch(
+        "https://script.google.com/macros/s/AKfycbyBooVusDKejBoHvYV5a-_98PHEHCZhebz74VwHJMlXUu3e6i1vi_ugK-wuCBc0-_qOTg/exec",
+        {
 
-    fetch("https://script.google.com/macros/s/AKfycbyBooVusDKejBoHvYV5a-_98PHEHCZhebz74VwHJMlXUu3e6i1vi_ugK-wuCBc0-_qOTg/exec", {
+            method: "POST",
 
-    method: "POST",
+            body: JSON.stringify({
 
-    body: JSON.stringify({
+                id: decodedText,
 
-        id: decodedText,
+                deviceID: "IPHONE-01",
 
-        deviceID: "IPHONE-01",
+                secretKey: "@123"
 
-        secretKey: "@123"
+            })
+
+        }
+    )
+
+    .then(response => response.json())
+
+    .then(result => {
+
+        console.log(result);
+
+
+        // --------------------------------
+        // Student name available
+        // --------------------------------
+
+        if (result.name) {
+
+            document.getElementById("status").innerHTML =
+                result.message;
+
+            document.getElementById("lastScan").innerHTML =
+                "<strong>" + result.name + "</strong>";
+
+        }
+
+
+        // --------------------------------
+        // No student name
+        // --------------------------------
+
+        else {
+
+            document.getElementById("status").innerHTML =
+                result.message;
+
+            document.getElementById("lastScan").innerHTML =
+                "";
+
+        }
 
     })
 
-})
-.then(response => response.json())
 
-.then(result => {
+    .catch(error => {
 
-    console.log(result);
+        document.getElementById("status").innerHTML =
+            "❌ Connection Error";
 
-    document.getElementById("status").innerHTML =
-        JSON.stringify(result);
+        document.getElementById("lastScan").innerHTML =
+            "";
 
-})
+        console.log(error);
 
-.catch(error => {
+    });
 
-    document.getElementById("status").innerHTML =
-        "❌ Error : " + error;
-
-});
 }
-window.onload = function(){
+
+
+window.onload = function () {
+
     startScanner();
+
 };
