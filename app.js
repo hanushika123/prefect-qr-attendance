@@ -1,6 +1,12 @@
 let scanner = null;
+let isProcessing = false;
+
 
 function startScanner() {
+
+    if (isProcessing) {
+        return;
+    }
 
     document.getElementById("status").innerHTML =
         "📷 Opening camera...";
@@ -26,7 +32,9 @@ function startScanner() {
     }).catch(err => {
 
         document.getElementById("status").innerHTML =
-            "❌ Camera Error : " + err;
+            "❌ Camera Error";
+
+        console.log(err);
 
     });
 
@@ -35,8 +43,27 @@ function startScanner() {
 
 function onScanSuccess(decodedText) {
 
+    // Already processing another scan
+    if (isProcessing) {
+        return;
+    }
+
+    // Lock immediately
+    isProcessing = true;
+
+
     document.getElementById("status").innerHTML =
         "⏳ Processing...";
+
+
+    // Stop camera immediately
+    if (scanner) {
+
+        scanner.stop().catch(function(err) {
+            console.log(err);
+        });
+
+    }
 
 
     fetch(
@@ -65,10 +92,6 @@ function onScanSuccess(decodedText) {
         console.log(result);
 
 
-        // --------------------------------
-        // Student name available
-        // --------------------------------
-
         if (result.name) {
 
             document.getElementById("status").innerHTML =
@@ -78,11 +101,6 @@ function onScanSuccess(decodedText) {
                 "<strong>" + result.name + "</strong>";
 
         }
-
-
-        // --------------------------------
-        // No student name
-        // --------------------------------
 
         else {
 
@@ -94,10 +112,22 @@ function onScanSuccess(decodedText) {
 
         }
 
+
+        // Start scanner again after 2 seconds
+        setTimeout(function() {
+
+            isProcessing = false;
+
+            startScanner();
+
+        }, 2000);
+
     })
 
 
     .catch(error => {
+
+        console.log(error);
 
         document.getElementById("status").innerHTML =
             "❌ Connection Error";
@@ -105,14 +135,21 @@ function onScanSuccess(decodedText) {
         document.getElementById("lastScan").innerHTML =
             "";
 
-        console.log(error);
+
+        setTimeout(function() {
+
+            isProcessing = false;
+
+            startScanner();
+
+        }, 2000);
 
     });
 
 }
 
 
-window.onload = function () {
+window.onload = function() {
 
     startScanner();
 
