@@ -15,19 +15,44 @@ function startScanner() {
 
     Html5Qrcode.getCameras().then(devices => {
 
-        if (devices.length) {
+        if (!devices || devices.length === 0) {
 
-            scanner.start(
-                devices[0].id,
-                {
-                    fps: 10,
-                    qrbox: 250
-                },
-                onScanSuccess,
-                errorMessage => {}
+            document.getElementById("status").innerHTML =
+                "❌ No Camera Found";
+
+            return;
+        }
+
+        // Find back/rear camera
+        let backCamera = devices.find(device => {
+
+            let label = device.label.toLowerCase();
+
+            return (
+                label.includes("back") ||
+                label.includes("rear") ||
+                label.includes("environment")
             );
 
+        });
+
+        // If back camera name is not available,
+        // use the last available camera on phones
+        if (!backCamera) {
+
+            backCamera = devices[devices.length - 1];
+
         }
+
+        scanner.start(
+            backCamera.id,
+            {
+                fps: 10,
+                qrbox: 250
+            },
+            onScanSuccess,
+            errorMessage => {}
+        );
 
     }).catch(err => {
 
