@@ -43,7 +43,7 @@ function onScanSuccess(decodedText){
      //   scanner.stop();
   //  }
 
-    fetch("https://script.google.com/macros/s/AKfycbzU7ofMGyxf56FxtXR5Mz_ObUr5RTXT9SmnA2P0CqFZkR0_XbR9nHqu64dJ3Ay2Jqo2ZQ/exec", {
+    fetch("https://script.google.com/macros/s/AKfycbyBooVusDKejBoHvYV5a-_98PHEHCZhebz74VwHJMlXUu3e6i1vi_ugK-wuCBc0-_qOTg/exec", {
 
     method: "POST",
 
